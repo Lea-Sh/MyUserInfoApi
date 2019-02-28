@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using MyUserInfoAPI.Data;
 using MyUserInfoAPI.Models;
 using MyUserInfoAPI.Repos;
 using MyUserInfoAPI.Services;
@@ -17,26 +14,27 @@ namespace MyUserInfoAPI.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IRepo<User> _repo;
-        private readonly UserService _service;
+        private readonly IService<User> _service;
 
-        public UsersController(IRepo<User> repo)
+        public UsersController(IRepo<User> repo, IService<User> service)
         {
             _repo = repo;
+            _service = service;
 
-        }
+    }
 
         // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return await _repo.GetAllAsync();
+            return await _service.GetAllAsync();
         }
         
         // GET: api/Users/5
         [HttpGet("{id:int}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _repo.GetOneAsync(id);
+            var user = await _service.GetOneAsync(id);
 
             if (user == null)
             {
@@ -46,20 +44,18 @@ namespace MyUserInfoAPI.Controllers
             return user;
         }
 
-        // GET: api/Users/Petrov
-        [Route("lastname/{lastName}")]
-        public IEnumerable<User> GetUsersByLastName(string lastName)
-        {
-            return (from u in _repo.GetAll() where u.LastName.Equals(lastName, StringComparison.OrdinalIgnoreCase) select u).ToList();
-            // return _service.GetByLastName(lastName);
-        }
-
         // GET: api/Users/name/Ivan
         [Route("name/{firstName}")]
-        public IEnumerable<User> GetUsersByFirstName(string firstName)
+        public async Task<ActionResult<IEnumerable<User>>> GetUsersByFirstName(string firstName)
         {
-            return (from u in _repo.GetAll() where u.FirstName.Equals(firstName, StringComparison.OrdinalIgnoreCase) select u).ToList();
-            // return _service.GetByFirstName(firstName);
+            return await _service.GetByFirstNameAsync(firstName);
+        }
+
+        // GET: api/Users/lastname/Petrov
+        [Route("lastname/{lastName}")]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsersByLastName(string lastName)
+        {
+            return await _service.GetByLastNameAsync(lastName);
         }
 
         // PUT: api/Users/5
@@ -76,7 +72,7 @@ namespace MyUserInfoAPI.Controllers
             }
             try
             {
-                await _repo.SaveAsync(user);
+                await _service.SaveAsync(user);
             }
          
                 catch (Exception ex)
@@ -97,7 +93,7 @@ namespace MyUserInfoAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _repo.AddAsync(user);
+            await _service.AddAsync(user);
 
             return CreatedAtAction($"GetUser", new {id = user.UserId}, user);
         }
@@ -106,20 +102,20 @@ namespace MyUserInfoAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<User>> DeleteUser(int id)
         {
-            var user = await _repo.GetOneAsync(id);
+            var user = await _service.GetOneAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            await _repo.DeleteAsync(user);
+            await _service.DeleteAsync(user);
 
             return user;
         }
 
-        private bool UserExists(int id)
-        {
-            return _repo.GetAll().Count(e => e.UserId == id) > 0;
-        }
+//        private bool UserExists(int id)
+//        {
+//            return _repo.GetAll().Count(e => e.UserId == id) > 0;
+//        }
     }
 }
