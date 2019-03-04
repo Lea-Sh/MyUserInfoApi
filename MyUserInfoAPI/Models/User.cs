@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyUserInfoAPI.Models
 {
-    public class User
+    public partial class User
     {
         [Key]
         public int UserId { get; set; }

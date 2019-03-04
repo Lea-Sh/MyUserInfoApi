@@ -26,6 +26,10 @@ namespace MyUserInfoAPI.Services
         {
             return await _repo.GetAllAsync();
         }
+        public List<User> GetAll()
+        {
+            return _repo.GetAll();
+        }
 
         public async Task<List<User>> GetByLastNameAsync(string lastName)
         {
