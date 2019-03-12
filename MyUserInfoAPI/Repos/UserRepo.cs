@@ -25,5 +25,18 @@ namespace MyUserInfoAPI.Repos
             Context.Entry(new User() { UserId = id }).State = EntityState.Deleted;
             return SaveChangesAsync();
         }
+
+        public List<User> GetBy(string property, string value)
+        {
+            var sql = $"SELECT * FROM Users WHERE {property} LIKE '{value}'";
+
+            return ExecuteQuery(sql);
+        }
+
+        public Task<List<User>> GetByAsync(string property, string value)
+        {
+            var sql = $"SELECT * FROM Users WHERE {property} LIKE '{value}'";
+            return ExecuteQueryAsync(sql);
+        }
     }
 }

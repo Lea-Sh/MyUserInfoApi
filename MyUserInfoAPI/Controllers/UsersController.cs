@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MyUserInfoAPI.Models;
-using MyUserInfoAPI.Repos;
 using MyUserInfoAPI.Services;
 
 
@@ -13,15 +12,12 @@ namespace MyUserInfoAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IRepo<User> _repo;
         private readonly IService<User> _service;
 
-        public UsersController(IRepo<User> repo, IService<User> service)
+        public UsersController(IService<User> service)
         {
-            _repo = repo;
             _service = service;
-
-    }
+        }
 
         // GET: api/Users
         [HttpGet]
@@ -81,7 +77,6 @@ namespace MyUserInfoAPI.Controllers
                 throw;
             }
             return NoContent();
-           
         }
         
        // POST: api/Users
@@ -99,7 +94,7 @@ namespace MyUserInfoAPI.Controllers
         }
 
         // DELETE: api/Users/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}}")]
         public async Task<ActionResult<User>> DeleteUser(int id)
         {
             var user = await _service.GetOneAsync(id);

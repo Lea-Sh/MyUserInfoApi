@@ -117,5 +117,9 @@ namespace MyUserInfoAPI.Repos
             Context.Entry(entity).State = EntityState.Deleted;
             return SaveChangesAsync();
         }
+
+        public List<T> ExecuteQuery(string sql) => Table.FromSql(sql).ToList();
+        public Task<List<T>> ExecuteQueryAsync(string sql)
+            => Table.FromSql(sql).ToListAsync();
     }
 }
