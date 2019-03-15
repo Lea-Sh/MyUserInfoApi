@@ -19,8 +19,9 @@ namespace MyUserInfoAPI.Services
         Task<int> AddAsync(T entity);
 
         Task<int> SaveAsync(T entity);
+        Task<int?> SaveAsync(int id, T entity);
 
-        Task<int> DeleteAsync(int id);
+        Task<T> DeleteAsync(int id);
         Task<int> DeleteAsync(T entity);
     }
 }

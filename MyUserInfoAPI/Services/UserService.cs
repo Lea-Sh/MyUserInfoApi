@@ -57,9 +57,25 @@ namespace MyUserInfoAPI.Services
             return await _repo.SaveAsync(user);
         }
 
-        public async Task<int> DeleteAsync(int id)
+        public async Task<int?> SaveAsync(int id, User user)
         {
-            return await _repo.DeleteAsync(id);
+            if (id != user.UserId)
+            {
+                return null;
+            }
+
+            return await _repo.SaveAsync(user);
+        }
+
+        public async Task<User> DeleteAsync(int id)
+        {
+            var user = await _repo.GetOneAsync(id);
+            if (user != null)
+            {
+                await _repo.DeleteAsync(user);
+            }
+
+            return user;
         }
 
         public async Task<int> DeleteAsync(User user)

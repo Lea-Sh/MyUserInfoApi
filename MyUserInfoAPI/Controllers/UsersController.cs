@@ -13,15 +13,12 @@ namespace MyUserInfoAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IRepo<User> _repo;
         private readonly IService<User> _service;
 
-        public UsersController(IRepo<User> repo, IService<User> service)
+        public UsersController(IService<User> service)
         {
-            _repo = repo;
             _service = service;
-
-    }
+        }
 
         // GET: api/Users
         [HttpGet]
@@ -66,25 +63,18 @@ namespace MyUserInfoAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            if (id != user.UserId)
+
+            var result = await _service.SaveAsync(id, user);
+
+            if (result == null)
             {
                 return BadRequest();
             }
-            try
-            {
-                await _service.SaveAsync(user);
-            }
-         
-                catch (Exception ex)
-            {
-                //Production app should do more here
-                throw;
-            }
+
             return NoContent();
-           
         }
-        
-       // POST: api/Users
+
+        // POST: api/Users
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
@@ -99,23 +89,16 @@ namespace MyUserInfoAPI.Controllers
         }
 
         // DELETE: api/Users/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<ActionResult<User>> DeleteUser(int id)
         {
-            var user = await _service.GetOneAsync(id);
+            var user = await _service.DeleteAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
-
-            await _service.DeleteAsync(user);
-
             return user;
         }
 
-//        private bool UserExists(int id)
-//        {
-//            return _repo.GetAll().Count(e => e.UserId == id) > 0;
-//        }
     }
 }
