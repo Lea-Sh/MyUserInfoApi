@@ -29,8 +29,10 @@ namespace MyUserInfoAPI
             services.AddDbContext<UserContext>(
                 options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddScoped<IRepo<User>, UserRepo>();
-            services.AddScoped<IService<User>, UserService>();
+//            services.AddScoped<IRepo<User>, UserRepo>();
+            services.AddScoped<IUserRepo, UserRepo>();
+//            services.AddScoped<IService<User>, UserService>();
+            services.AddScoped<IUserService, UserService>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

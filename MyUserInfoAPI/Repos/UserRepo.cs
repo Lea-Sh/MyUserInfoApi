@@ -8,57 +8,31 @@ using MyUserInfoAPI.Models;
 
 namespace MyUserInfoAPI.Repos
 {
-    public class UserRepo: BaseRepo<User>, IRepo<User>
+    public class UserRepo: BaseRepo<User>, IUserRepo
     {
         public UserRepo(UserContext context) : base(context)
         {
             Table = Context.Users;
         }
 
-        public int Delete(int id)
-        {
-            Context.Entry(new User() { UserId = id }).State = EntityState.Deleted;
-            return SaveChanges();
-        }
         public Task<int> DeleteAsync(int id)
         {
             Context.Entry(new User() { UserId = id }).State = EntityState.Deleted;
             return SaveChangesAsync();
         }
-        public List<User> GetBy(string property, string value)
+
+        public Task<List<User>> GetByLastNameAsync(string lastName)
         {
-            switch (property)
-            {
-                case "LastName": return GetByLastName(value);
-                case "FirstName": return GetByFirstName(value);
-                default: return null;
-            }
+            return SearchByPropertyAsync(lastName, u => u.LastName);
         }
-        public Task<List<User>> GetByAsync(string property, string value)
+        public Task<List<User>> GetByFirstNameAsync(string firstName)
         {
-            switch (property)
-            {
-                case "LastName": return GetByLastNameAsync(value); 
-                case "FirstName": return GetByFirstNameAsync(value);
-                default: return null;
-            }
-        }
-        private List<User> GetByLastName(string lastName)
-        {
-            return (from u in Table where u.LastName.Equals(lastName, StringComparison.OrdinalIgnoreCase) select u).ToList();
-        }
-        private Task<List<User>> GetByLastNameAsync(string lastName)
-        {
-            return (from u in Table where u.LastName.Equals(lastName, StringComparison.OrdinalIgnoreCase) select u).ToListAsync();
+            return SearchByPropertyAsync(firstName, u => u.FirstName);
         }
 
-        private List<User> GetByFirstName(string firstName)
+        private Task<List<User>> SearchByPropertyAsync(string propertyValue, Func<User, string> propertyGetter)
         {
-            return (from u in Table where u.FirstName.Equals(firstName, StringComparison.OrdinalIgnoreCase) select u).ToList();
-        }
-        private Task<List<User>> GetByFirstNameAsync(string firstName)
-        {
-            return (from u in Table where u.FirstName.Equals(firstName, StringComparison.OrdinalIgnoreCase) select u).ToListAsync();
+            return Table.Where(x => propertyGetter(x).Equals(propertyValue, StringComparison.OrdinalIgnoreCase)).ToListAsync();
         }
     }
 }

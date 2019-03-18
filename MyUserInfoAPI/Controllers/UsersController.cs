@@ -13,9 +13,9 @@ namespace MyUserInfoAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IService<User> _service;
+        private readonly IUserService _service;
 
-        public UsersController(IService<User> service)
+        public UsersController(IUserService service)
         {
             _service = service;
         }

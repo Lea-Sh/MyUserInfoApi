@@ -8,11 +8,11 @@ using MyUserInfoAPI.Repos;
 
 namespace MyUserInfoAPI.Services
 {
-    public class UserService : IService<User>
+    public class UserService : IUserService
     {
-        private readonly IRepo<User> _repo;
+        private readonly IUserRepo _repo;
 
-        public UserService(IRepo<User> repo)
+        public UserService(IUserRepo repo)
         {
             _repo = repo;
         }
@@ -26,19 +26,16 @@ namespace MyUserInfoAPI.Services
         {
             return await _repo.GetAllAsync();
         }
-        public List<User> GetAll()
-        {
-            return _repo.GetAll();
-        }
+
 
         public async Task<List<User>> GetByLastNameAsync(string lastName)
         {
-            return await _repo.GetByAsync("LastName", lastName);
+            return await _repo.GetByLastNameAsync(lastName);
         }
 
         public async Task<List<User>> GetByFirstNameAsync(string firstName)
         {
-            return await _repo.GetByAsync("FirstName", firstName);
+            return await _repo.GetByFirstNameAsync(firstName);
         }
 
         public async Task<int> AddAsync(User user)
