@@ -92,12 +92,12 @@ namespace MyUserInfoAPI.Controllers
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<User>> DeleteUser(int id)
         {
-            var user = await _service.DeleteAsync(id);
-            if (user == null)
+            var result = await _service.DeleteAsync(id);
+            if (result.Status == Status.Failed)
             {
                 return NotFound();
             }
-            return user;
+            return result.Entity;
         }
 
     }

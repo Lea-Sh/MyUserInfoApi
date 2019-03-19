@@ -58,20 +58,21 @@ namespace MyUserInfoAPI.Services
             return await _repo.SaveAsync(user);
         }
 
-        public async Task<User> DeleteAsync(int id)
+        public async Task<Result<User>> DeleteAsync(int id)
         {
-            var user = await _repo.GetOneAsync(id);
-            if (user != null)
+            var result = new Result<User>();
+            result.Entity = await _repo.GetOneAsync(id);
+            if (result.Entity != null)
             {
-                await _repo.DeleteAsync(user);
+                await _repo.DeleteAsync(result.Entity);
+                result.Status = Status.Ok;
+            }
+            else
+            {
+                result.Status = Status.Failed;
             }
 
-            return user;
-        }
-
-        public async Task<int> DeleteAsync(User user)
-        {
-            return await _repo.DeleteAsync(user);
+            return result;
         }
     }
 }
