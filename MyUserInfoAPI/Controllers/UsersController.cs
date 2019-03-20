@@ -66,7 +66,7 @@ namespace MyUserInfoAPI.Controllers
 
             var result = await _service.SaveAsync(id, user);
 
-            if (result == null)
+            if (result.Status == Status.Failed)
             {
                 return BadRequest();
             }
@@ -83,8 +83,11 @@ namespace MyUserInfoAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _service.AddAsync(user);
-
+            var result = await _service.AddAsync(user);
+            if (result.Status == Status.Failed)
+            {
+                return NotFound();
+            }
             return CreatedAtAction($"GetUser", new {id = user.UserId}, user);
         }
 

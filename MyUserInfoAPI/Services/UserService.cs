@@ -38,30 +38,39 @@ namespace MyUserInfoAPI.Services
             return await _repo.GetByFirstNameAsync(firstName);
         }
 
-        public async Task<int> AddAsync(User user)
+        public async Task<Result<User>> AddAsync(User user)
         {
-            return await _repo.AddAsync(user);
+            var result = new Result<User>
+            {
+                Entity = user,
+                Status = await _repo.AddAsync(user) == 1 ? Status.Ok : Status.Failed
+            };
+            
+            return result;
         }
 
-        public async Task<int> SaveAsync(User user)
+        public async Task<Result<User>> SaveAsync(int id, User user)
         {
-            return await _repo.SaveAsync(user);
-        }
-
-        public async Task<int?> SaveAsync(int id, User user)
-        {
+            var result = new Result<User>();
             if (id != user.UserId)
             {
-                return null;
+                result.Status = Status.Failed;
+                result.Entity = null;
+                return result;
             }
 
-            return await _repo.SaveAsync(user);
+            result.Entity = user;
+            result.Status = await _repo.SaveAsync(user) == 1 ? Status.Ok : Status.Failed;
+
+            return result;
         }
 
         public async Task<Result<User>> DeleteAsync(int id)
         {
             var result = new Result<User>();
+
             result.Entity = await _repo.GetOneAsync(id);
+
             if (result.Entity != null)
             {
                 await _repo.DeleteAsync(result.Entity);
