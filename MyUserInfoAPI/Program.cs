@@ -23,8 +23,10 @@ namespace MyUserInfoAPI
                 var services = scope.ServiceProvider;
                 try
                 {
-                    var context = services.GetRequiredService<UserContext>();
-                    DbInitializer.Initialize(context);
+                    using (var context = new UserContext())
+                    {
+                        DbInitializer.Initialize(context);
+                    }
                 }
                 catch (Exception ex)
                 {

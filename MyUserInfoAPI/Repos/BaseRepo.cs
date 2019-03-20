@@ -12,9 +12,13 @@ namespace MyUserInfoAPI.Repos
         protected UserContext Context { get; }
         protected DbSet<T> Table;
 
-        protected BaseRepo(UserContext context)
+        protected BaseRepo()
         {
-            Context = context;
+            Context = new UserContext();
+        }
+        public void Dispose()
+        {
+            Context?.Dispose();
         }
 
         internal async Task<int> SaveChangesAsync()

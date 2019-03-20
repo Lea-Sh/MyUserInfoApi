@@ -10,7 +10,7 @@ namespace MyUserInfoAPI.Repos
 {
     public class UserRepo: BaseRepo<User>, IUserRepo
     {
-        public UserRepo(UserContext context) : base(context)
+        public UserRepo()
         {
             Table = Context.Users;
         }

@@ -26,8 +26,8 @@ namespace MyUserInfoAPI
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddDbContext<UserContext>(
-                options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+//            services.AddDbContext<UserContext>(
+//                options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
 //            services.AddScoped<IRepo<User>, UserRepo>();
             services.AddScoped<IUserRepo, UserRepo>();
