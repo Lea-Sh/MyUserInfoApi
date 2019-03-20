@@ -73,12 +73,11 @@ namespace MyUserInfoAPI.Services
 
             if (result.Entity != null)
             {
-                await _repo.DeleteAsync(result.Entity);
-                result.Status = Status.Ok;
+                result.Status = await _repo.DeleteAsync(result.Entity) == 1 ? Status.Ok : Status.Failed;
             }
             else
             {
-                result.Status = Status.Failed;
+                result.Status = Status.NotFound;
             }
 
             return result;

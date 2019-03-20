@@ -68,7 +68,7 @@ namespace MyUserInfoAPI.Controllers
 
             if (result.Status == Status.Failed)
             {
-                return BadRequest();
+                return NotFound();
             }
 
             return NoContent();
@@ -96,7 +96,7 @@ namespace MyUserInfoAPI.Controllers
         public async Task<ActionResult<User>> DeleteUser(int id)
         {
             var result = await _service.DeleteAsync(id);
-            if (result.Status == Status.Failed)
+            if (result.Status == Status.NotFound || result.Status == Status.Failed)
             {
                 return NotFound();
             }
