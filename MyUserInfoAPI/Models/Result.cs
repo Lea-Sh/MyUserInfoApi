@@ -4,6 +4,7 @@
     {
         Failed,
         NotFound,
+        ValidationError,
         Ok
     }
 

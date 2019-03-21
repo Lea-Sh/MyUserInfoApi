@@ -59,13 +59,12 @@ namespace MyUserInfoAPI.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> PutUser(int id, [FromBody] User user)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var result = await _service.SaveAsync(id, user);
 
+            if (result.Status == Status.ValidationError)
+            {
+                return BadRequest();
+            }
             if (result.Status == Status.Failed)
             {
                 return NotFound();
@@ -78,12 +77,12 @@ namespace MyUserInfoAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var result = await _service.AddAsync(user);
+
+            if (result.Status == Status.ValidationError)
+            {
+                return BadRequest();
+            }
             if (result.Status == Status.Failed)
             {
                 return NotFound();

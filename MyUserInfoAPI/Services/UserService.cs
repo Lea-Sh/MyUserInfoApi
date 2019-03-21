@@ -40,12 +40,18 @@ namespace MyUserInfoAPI.Services
 
         public async Task<Result<User>> AddAsync(User user)
         {
-            var result = new Result<User>
+            var result = new Result<User>();
+            result.Entity = user;
+
+            if (!IsUserValid(user))
             {
-                Entity = user,
-                Status = await _repo.AddAsync(user) == 1 ? Status.Ok : Status.Failed
-            };
-            
+                result.Status = Status.ValidationError;
+            }
+            else
+            {
+                result.Status = await _repo.AddAsync(user) == 1 ? Status.Ok : Status.Failed;
+            }
+
             return result;
         }
 
@@ -56,6 +62,12 @@ namespace MyUserInfoAPI.Services
             {
                 result.Status = Status.Failed;
                 result.Entity = null;
+                return result;
+            }
+            if (!IsUserValid(user))
+            {
+                result.Entity = user;
+                result.Status = Status.ValidationError;
                 return result;
             }
 
@@ -81,6 +93,12 @@ namespace MyUserInfoAPI.Services
             }
 
             return result;
+        }
+
+        private bool IsUserValid(User user)
+        {
+            return !(user == null || string.IsNullOrEmpty(user.LastName) || user.LastName.Length > 50 ||
+                   (user.FirstName != null && user.FirstName.Length > 50));
         }
     }
 }
