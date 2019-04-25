@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using MyUserInfoAPI.Data;
 using MyUserInfoAPI.Models;
 using MyUserInfoAPI.Repos;
+using MyUserInfoAPI.Validators;
 
 namespace MyUserInfoAPI.Services
 {
@@ -43,7 +41,7 @@ namespace MyUserInfoAPI.Services
             var result = new Result<User>();
             result.Entity = user;
 
-            if (!IsUserValid(user))
+            if (!(new UserValidator().Validate(user)))
             {
                 result.Status = Status.ValidationError;
             }
@@ -64,7 +62,7 @@ namespace MyUserInfoAPI.Services
                 result.Entity = null;
                 return result;
             }
-            if (!IsUserValid(user))
+            if (!(new UserValidator().Validate(user)))
             {
                 result.Entity = user;
                 result.Status = Status.ValidationError;
@@ -95,10 +93,5 @@ namespace MyUserInfoAPI.Services
             return result;
         }
 
-        private bool IsUserValid(User user)
-        {
-            return !(user == null || string.IsNullOrEmpty(user.LastName) || user.LastName.Length > 50 ||
-                   (user.FirstName != null && user.FirstName.Length > 50));
-        }
     }
 }
